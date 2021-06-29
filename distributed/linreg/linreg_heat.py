@@ -45,15 +45,8 @@ def linear_regression(
 
     for step in range(steps):
         scores = features @ weights
-        #print(features, weights, scores, flush=True)
         error = scores - target
-        #print("error", error)
-        import numpy
-        #numpy.savetxt("error.csv", error, delimiter=',')
-        #numpy.savetxt("features.csv", features, delimiter=',')
-        #print(type(error @ features))
         gradient = -(1.0 / len(features)) * (error @ features)
-        #print("gradient", gradient, "tmp", tmp)
         weights += learning_rate * gradient
 
         if step % sample == 0:

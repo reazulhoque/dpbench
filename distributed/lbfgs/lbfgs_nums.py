@@ -203,14 +203,14 @@ def load_set(app: ArrayApplication, read_func, dataset):
 
 def run_lbfgs():
     if not ray.is_initialized():
-        settings.cluster_shape = (1, 1)
+        #settings.cluster_shape = (1, 1)
         ray.init(address='auto', _redis_password='5241590000000000')
     app: ArrayApplication = instance()
     time.sleep(0.1)
     
+    start_time = time.time()
     X, y = sample_set(app)
     
-    start_time = time.time()
     y_pred_proba = logistic(app, X, y, max_iter=10, m=3)
     print("scheduling submitted.")
     y_pred = (y_pred_proba > 0.5).astype(np.float32)

@@ -191,9 +191,9 @@ def sample_set(app):
 
 
 def run_lbfgs():
+    start_time = time.time()
     X, y = sample_set(np)
     
-    start_time = time.time()
     y_pred_proba = logistic(np, X, y, max_iter=10, m=3)
     print("scheduling submitted.")
     y_pred = (y_pred_proba > 0.5).astype(np.float32)
