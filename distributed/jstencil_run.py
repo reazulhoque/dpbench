@@ -81,6 +81,6 @@ if __name__ == "__main__":
     run_benchmark(
         run_jstencil,
         args.benchmark,
-        "STENCIL",
+        f"STENCIL,{args.use}",
         (args.N, args.I, args.timing)
     )

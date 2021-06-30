@@ -67,6 +67,6 @@ if __name__ == "__main__":
     run_benchmark(
         run_lbfgs,
         args.benchmark,
-        f"LBFGS",
+        f"LBFGS,{args.use}",
         (),
     )

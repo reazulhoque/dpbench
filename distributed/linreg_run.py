@@ -104,6 +104,6 @@ if __name__ == "__main__":
     run_benchmark(
         run_linear_regression,
         args.benchmark,
-        f"LINREG({args.P})",
+        f"LINREG({args.P}),{args.use}",
         (args.N, args.F, args.P, args.I, args.S, args.B),
     )
