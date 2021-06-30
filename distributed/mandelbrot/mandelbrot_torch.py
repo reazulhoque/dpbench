@@ -33,15 +33,14 @@ def run_mandelbrot(xmin, ymin, xmax, ymax, xn, yn, itermax, horizon=2.0):
     # https://thesamovar.wordpress.com/2009/03/22/fast-fractals-with-python-and-numpy/
     start = datetime.datetime.now()
     Xi, Yi = np.meshgrid(np.arange(xn), np.arange(yn))
-    print(Yi)
     X = np.linspace(xmin, xmax, xn, dtype=np.float64)[Xi]
     Y = np.linspace(ymin, ymax, yn, dtype=np.float64)[Yi]
     C = X + Y * 1j
     N_ = np.zeros(C.shape, dtype=np.int64)
     Z_ = np.zeros(C.shape, dtype=np.complex128)
-    Xi.reshape(xn * yn)
-    Yi.reshape(xn * yn)
-    C.reshape(xn * yn)
+    Xi = np.reshape(Xi, (xn * yn,))
+    Yi = np.reshape(Yi, (xn * yn,))
+    C = np.reshape(C, (xn * yn,))
 
     Z = np.zeros(C.shape, dtype=np.complex128)
     for i in range(itermax):

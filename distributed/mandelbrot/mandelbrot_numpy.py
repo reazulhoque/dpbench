@@ -33,7 +33,6 @@ def run_mandelbrot(xmin, ymin, xmax, ymax, xn, yn, itermax, horizon=2.0):
     # https://thesamovar.wordpress.com/2009/03/22/fast-fractals-with-python-and-numpy/
     start = datetime.datetime.now()
     Xi, Yi = np.mgrid[0:xn, 0:yn]
-    print(Yi)
     X = np.linspace(xmin, xmax, xn, dtype=np.float64)[Xi]
     Y = np.linspace(ymin, ymax, yn, dtype=np.float64)[Yi]
     C = X + Y * 1j
