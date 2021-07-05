@@ -38,10 +38,10 @@ def initialize(N):
 def run(grid, I, N):  # noqa: E741
     print("Running Jacobi stencil...")
     for i in range(I):
-        center = grid[1:-1, 1:-1]#.balance()
+        center = grid[1:-1, 1:-1].balance()
         north = grid[0:-2, 1:-1].balance()
-        east = grid[1:-1, 2:]#.balance()
-        west = grid[1:-1, 0:-2]#.balance()
+        east = grid[1:-1, 2:].balance()
+        west = grid[1:-1, 0:-2].balance()
         south = grid[2:, 1:-1].balance()
         average = center + north + east + west + south
         work = 0.2 * average

@@ -3,6 +3,7 @@
 
 import datetime
 import heat as np
+#import heat.cw4heat as np
 """
 Create Your Own N-body Simulation (With Python)
 Philip Mocz (2020) Princeton Univeristy, @PMocz
@@ -124,7 +125,8 @@ def initialize(N, tEnd, dt):
     mass = 20.0 * np.ones((N, 1), split=0) / N  # total mass of particles is 20
     pos = np.random.random((N, 3), split=0)  # randomly selected positions and velocities
     vel = np.random.random((N, 3), split=0)
-    Nt = int(np.ceil(np.array(tEnd / dt)))
+    import math
+    Nt = int(math.ceil(tEnd / dt))
     return mass, pos, vel, Nt
 
 
@@ -132,6 +134,7 @@ def run_nbody(N, tEnd, dt, softening):
     start = datetime.datetime.now()
     mass, pos, vel, Nt = initialize(N, tEnd, dt)
     KE, PE = nbody(mass, pos, vel, N, Nt, dt, 1.0, softening)
+    _, _ = KE.shape, PE.shape
     delta = datetime.datetime.now() - start
     total = delta.total_seconds() * 1000.0
     print(f"Elapsed Time: {total} ms")

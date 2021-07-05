@@ -24,6 +24,7 @@ import math
 import heat as np
 #import heat.cw4heat as np
 
+
 def initialize(N, F, T):
     # We'll generate some random inputs here
     # since we don't need it to converge
