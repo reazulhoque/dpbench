@@ -19,6 +19,7 @@ from __future__ import print_function
 
 import math
 import sys
+import time
 
 if sys.version_info > (3, 0):
     from functools import reduce
@@ -47,6 +48,24 @@ def run_benchmark(f, samples, name, args):
             + reduce(lambda x, y: x + y, map(lambda x: str(x) + ", ", results))
         )
         print("-----------------------------------------------")
+
+        ltime = time.localtime(time.time())
+        fname = "bench-results.csv"
+        with open(fname, "a") as csv:
+            csv.write(','.join([
+                str(ltime.tm_year),
+                str(ltime.tm_mon),
+                str(ltime.tm_mday),
+                str(ltime.tm_hour),
+                str(ltime.tm_min),
+                str(ltime.tm_sec),
+                name,
+                str(samples),
+                str(mean),
+                str(variance),
+                str(stddev),
+                *(str(x) for x in args),]))
+            csv.write('\n')
     else:
         # Just run the application like normal
         f(*args)
