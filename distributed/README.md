@@ -3,7 +3,7 @@
 Each benchmark is implemented using different distributed implementations of numpy. For baseline comparison versions using torch and plain numpy are also provided.
 The following distributed implementataions are available
 * NumS
-* legate
+* legate (limited)
 * HeAT
 * dask-array
 
@@ -16,3 +16,5 @@ We currently have the following benchmarks
 * lbfgs: Limited-memory Broyden–Fletcher–Goldfarb–Shannon
          Use lbfgs/gen_Xy_data.py to generate input data
 * linreg: Linear Regression
+* nbody: N-Body simulation
+* mandelbrot: Fractals
