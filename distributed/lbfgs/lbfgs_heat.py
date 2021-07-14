@@ -18,7 +18,7 @@ from typing import List, Union
 
 import heat as np
 #import heat.cw4heat as np
-
+#np.init()
 
 def forward(app, X, theta):
     #print("forward:", X.shape, theta.shape)
@@ -89,7 +89,7 @@ class LBFGS(object):
             return mem.gamma * self.identity
 
     def get_p(self, H, g):
-        q = g
+        q = np.copy(g)
         forward_vars = []
         for i in range(-1, -self.m-1, -1):
             mem_i: LBFGSMemory = self.memory[i]
@@ -184,8 +184,8 @@ def sample_set(app):
     #X2 = rs.normal(loc=10.0, size=shape,
     #               #block_shape=block_shape
     #              )
-    X = np.load_csv("X.csv", split=0)
-    y = np.load_csv("y.csv", split=None).squeeze()
+    X = app.load_csv("X.csv", split=0)
+    y = app.load_csv("y.csv", split=None).squeeze()
     #print("sample", X.lshape, X.shape, y.lshape, y.shape)
     return X, y
 

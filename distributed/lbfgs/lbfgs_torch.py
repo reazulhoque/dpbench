@@ -89,6 +89,7 @@ class LBFGS(object):
 
     def get_p(self, H, g):
         q = g
+        q.detach().clone()
         forward_vars = []
         for i in range(-1, -self.m-1, -1):
             mem_i: LBFGSMemory = self.memory[i]

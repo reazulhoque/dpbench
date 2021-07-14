@@ -88,7 +88,7 @@ class LBFGS(object):
             return mem.gamma * self.identity
 
     def get_p(self, H, g):
-        q = g
+        q = np.copy(g)
         forward_vars = []
         for i in range(-1, -self.m-1, -1):
             mem_i: LBFGSMemory = self.memory[i]
