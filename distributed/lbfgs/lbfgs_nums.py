@@ -137,8 +137,6 @@ class LBFGS(object):
                                   init_alpha=init_alpha,
                                   c=1e-4,
                                   min_alpha=1e-30)
-            print("alpha", alpha)
-            # print("alpha", alpha,
             #       "objective", f(theta).get(),
             #       "grad_norm", self.app.sqrt(g.T @ g).get())
             next_theta = theta + alpha * p
@@ -202,9 +200,9 @@ def load_set(app: ArrayApplication, read_func, dataset):
 
 
 def run_lbfgs():
-    if not ray.is_initialized():
+    #if not ray.is_initialized():
         #settings.cluster_shape = (1, 1)
-        ray.init(address='auto', _redis_password='5241590000000000')
+    #    ray.init(address='auto', _redis_password='')  #5241590000000000')
     app: ArrayApplication = instance()
     time.sleep(0.1)
     

@@ -131,7 +131,6 @@ class LBFGS(object):
                                   init_alpha=init_alpha,
                                   c=1e-4,
                                   min_alpha=1e-30)
-            #print("alpha", alpha)
             # print("alpha", alpha,
             #       "objective", f(theta).get(),
             #       "grad_norm", self.app.sqrt(g.T @ g).get())

@@ -3,8 +3,10 @@
 
 import datetime
 import dask.array as np
-#from dask.distributed import Client
-#client = Client()
+import dask
+from dask.distributed import Client
+from os import getenv
+import numpy
 
 """
 Create Your Own N-body Simulation (With Python)
@@ -16,7 +18,7 @@ Code calculates pairwise forces according to Newton's Law of Gravity
 
 def getAcc(pos, mass, G, softening):
     """
-    Calculate the acceleration on each particle due to Newton's Law 
+    Calculate the acceleration on each particle due to Newton's Law
     pos  is an N x 3 matrix of positions
     mass is an N x 1 vector of masses
     G is Newton's Gravitational constant
@@ -81,7 +83,7 @@ def getEnergy(pos, vel, mass, G):
     # PE = G * np.sum(np.sum(np.triu(-(mass*mass.T)*inv_r,1)))
     PE = G * np.sum(np.triu(-(mass * mass.T) * inv_r, 1))
 
-    return KE, PE
+    return KE.persist(), PE.persist()
 
 
 def nbody(mass, pos, vel, N, Nt, dt, G, softening):
@@ -119,10 +121,10 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
         # get energy of system
         KE[i + 1], PE[i + 1] = getEnergy(pos, vel, mass, G)
 
-    return KE, PE
+    return KE.persist().result(), PE.persist().result()
 
 
-def initialize(N, tEnd, dt):
+def initialize(N, tEnd, dt, nt):
     np.random.seed(42)
     mass = (20.0 * np.ones((N, 1)) / N).persist()  # total mass of particles is 20
     pos = np.random.random((N, 3)).persist()  # randomly selected positions and velocities
@@ -131,9 +133,11 @@ def initialize(N, tEnd, dt):
     return mass, pos, vel, Nt
 
 
-def run_nbody(N, tEnd, dt, softening):    
+def run_nbody(N, tEnd, dt, softening):
+    client = Client(scheduler_file=getenv("DASK_CFG"))
+    nt = numpy.sum([x for x in client.nthreads().values()])
     start = datetime.datetime.now()
-    mass, pos, vel, Nt = initialize(N, tEnd, dt)
+    mass, pos, vel, Nt = initialize(N, tEnd, dt, nt)
     KE, PE = nbody(mass, pos, vel, N, Nt, dt, 1.0, softening)
     delta = datetime.datetime.now() - start
     total = delta.total_seconds() * 1000.0

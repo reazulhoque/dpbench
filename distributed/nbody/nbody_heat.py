@@ -4,6 +4,8 @@
 import datetime
 import heat as np
 #import heat.cw4heat as np
+#np.init()
+
 """
 Create Your Own N-body Simulation (With Python)
 Philip Mocz (2020) Princeton Univeristy, @PMocz

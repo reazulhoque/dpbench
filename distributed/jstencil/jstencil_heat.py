@@ -23,6 +23,7 @@ import math
 
 import heat as np
 #import heat.cw4heat as np
+#np.init()
 
 
 def initialize(N):

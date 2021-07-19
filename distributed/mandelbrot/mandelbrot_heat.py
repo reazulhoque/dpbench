@@ -27,7 +27,7 @@
 import datetime
 import heat as np
 #import heat.cw4heat as np
-
+#np.init()
 
 def run_mandelbrot(xmin, ymin, xmax, ymax, xn, yn, itermax, horizon=2.0):
     # Adapted from

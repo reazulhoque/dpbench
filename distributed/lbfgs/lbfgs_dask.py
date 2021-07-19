@@ -16,8 +16,11 @@
 import time
 from typing import List, Union
 
-import numpy
 import dask.array as np
+from dask.distributed import Client
+from os import getenv
+import numpy
+
 
 def forward(app, X, theta):
     #print("forward:", X.shape, theta.shape)
@@ -41,7 +44,7 @@ def bt_linesearch(app,
                   rho=1.e-1, init_alpha=1.0, c=1e-4, min_alpha=1e-10):
 
     def f(theta_prime):
-        return objective(app, y, forward(app, X, theta_prime))
+        return objective(app, y, forward(app, X, theta_prime)).persist()
 
     alpha = init_alpha
     f_val = f(theta)
@@ -108,7 +111,7 @@ class LBFGS(object):
         if self.k != 0:
             raise Exception("Unexpected state.")
 
-        self.identity = self.app.eye(X.shape[1], dtype=self.dtype)
+        self.identity = self.app.eye(X.shape[1], dtype=self.dtype).persist()
 
         # TODO: Try sampling a new block every iteration.
         # TODO: Try stochastic approach, given line search...
@@ -116,13 +119,12 @@ class LBFGS(object):
         # y_btls = y[:y.block_shape[0]]
         X_btls = X
         y_btls = y
-
-        g = grad(X, y, forward(self.app, X, theta))
+        g = grad(X, y, forward(self.app, X, theta)).persist()
         next_g = None
         next_theta = None
         while self.k < self.max_iter:
-            H = self.get_H()
-            p = - self.get_p(H, g)
+            H = self.get_H().persist()
+            p = - self.get_p(H, g).persist()
             init_alpha = min(1.0, 10**(self.k-self.max_iter/2))
             alpha = bt_linesearch(self.app, X_btls, y_btls,
                                   theta, g, p,
@@ -130,7 +132,6 @@ class LBFGS(object):
                                   init_alpha=init_alpha,
                                   c=1e-4,
                                   min_alpha=1e-30)
-            #print("alpha", alpha)
             # print("alpha", alpha,
             #       "objective", f(theta).get(),
             #       "grad_norm", self.app.sqrt(g.T @ g).get())
@@ -147,7 +148,7 @@ class LBFGS(object):
             self.memory.pop(0)
             self.k += 1
             theta = next_theta
-            g = next_g
+            g = next_g.persist()
             # if self.converged(next_g):
             #     break
 
@@ -162,17 +163,17 @@ class LBFGS(object):
         return self.app.sqrt(g.T @ g) < self.thresh
 
 
-def logistic(app, X, y, max_iter, m):
-    Xc = app.concatenate([X, app.ones((X.shape[0], 1), dtype=X.dtype)],
+def logistic(app, X, y, max_iter, m, nt):
+    Xc = app.concatenate([X, app.ones((X.shape[0], 1), dtype=X.dtype, chunks=(X.shape[0]//nt, 1))],
                          axis=1,
     )
-    theta = app.zeros((Xc.shape[1],), dtype=Xc.dtype)
+    theta = app.zeros((Xc.shape[1],), dtype=Xc.dtype, chunks=(X.shape[1]//nt,))
     lbfgs_optimizer = LBFGS(app, m=m, max_iter=max_iter, dtype=Xc.dtype)
     theta = lbfgs_optimizer.execute(Xc, y, theta)
-    return forward(app, Xc, theta)
+    return forward(app, Xc, theta).persist()
 
 
-def sample_set(app):
+def sample_set(app, nt):
     shape = (50000, 1000)
     #block_shape = (100, 10)
     #rs = app.random.RandomState(1337)
@@ -184,14 +185,16 @@ def sample_set(app):
     #              )
     X = numpy.loadtxt("X.csv", delimiter=',')
     y = numpy.loadtxt("y.csv", delimiter=',')
-    return np.from_array(X), np.from_array(y)
+    return np.from_array(X, chunks=(X.shape[0]//nt, X.shape[1])).persist(), np.from_array(y, chunks=(y.shape[0]//nt,)).persist()
 
 
 def run_lbfgs():
+    client = Client(scheduler_file=getenv("DASK_CFG"))
+    nt = numpy.sum([x for x in client.nthreads().values()])
     start_time = time.time()
-    X, y = sample_set(np)
-    
-    y_pred_proba = logistic(np, X, y, max_iter=10, m=3)
+    X, y = sample_set(np, nt)
+    print("data loaded.")
+    y_pred_proba = logistic(np, X, y, 10, 3, nt)
     print("scheduling submitted.")
     y_pred = (y_pred_proba > 0.5).astype(numpy.float32)
     print("prediction submitted.")

@@ -26,21 +26,30 @@
 
 import datetime
 import dask.array as np
+from dask.distributed import Client
+from os import getenv
+import numpy
 
 
 def run_mandelbrot(xmin, ymin, xmax, ymax, xn, yn, itermax, horizon=2.0):
     # Adapted from
     # https://thesamovar.wordpress.com/2009/03/22/fast-fractals-with-python-and-numpy/
+    client = Client(scheduler_file=getenv("DASK_CFG"))
+    nt = numpy.sum([x for x in client.nthreads().values()])
     start = datetime.datetime.now()
     Yi, Xi = np.meshgrid(range(xn), range(xn))
-    X = np.linspace(xmin, xmax, xn, dtype='float64')[Xi]
-    Y = np.linspace(ymin, ymax, yn, dtype='float64')[Yi]
+    xis = Xi.shape
+    yis = Yi.shape
+    X = np.reshape(np.linspace(xmin, xmax, xn, dtype='float64', chunks=(xn//nt,))[Xi.flatten()], xis)
+    Y = np.reshape(np.linspace(ymin, ymax, yn, dtype='float64', chunks=(yn//nt,))[Yi.flatten()], yis)
     C = X + Y * 1j
-    N_ = np.zeros(C.shape, dtype='int64')
-    Z_ = np.zeros(C.shape, dtype='complex128')
-    Xi.shape = Yi.shape = C.shape = xn * yn
+    N_ = np.zeros(C.shape, dtype='int64', chunks=(C.shape[0]//nt, C.shape[1]))
+    Z_ = np.zeros(C.shape, dtype='complex128', chunks=(C.shape[0]//nt, C.shape[1]))
+    Xi = np.reshape(Xi, (xn * yn,)).rechunk(((xn*yn)//nt,))
+    Yi = np.reshape(Yi, (xn * yn,)).rechunk(((xn*yn)//nt,))
+    C = np.reshape(C, (xn * yn,)).rechunk(((xn*yn)//nt,))
 
-    Z = np.zeros(C.shape, 'complex128')
+    Z = np.zeros(C.shape, dtype='complex128', chunks=(C.shape[0]//nt,))
     for i in range(itermax):
         if not len(Z):
             break

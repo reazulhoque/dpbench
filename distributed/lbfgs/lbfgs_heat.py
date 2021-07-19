@@ -132,7 +132,6 @@ class LBFGS(object):
                                   init_alpha=init_alpha,
                                   c=1e-4,
                                   min_alpha=1e-30)
-            #print("alpha", alpha)
             # print("alpha", alpha,
             #       "objective", f(theta).get(),
             #       "grad_norm", self.app.sqrt(g.T @ g).get())
@@ -165,7 +164,7 @@ class LBFGS(object):
 
 
 def logistic(app, X, y, max_iter, m):
-    Xc = app.concatenate([X, app.ones((X.shape[0], 1), dtype=X.dtype)],
+    Xc = app.concatenate([X, app.ones((X.shape[0], 1), dtype=X.dtype, split=0)],
                          axis=1,
     )
     theta = app.zeros((Xc.shape[1],), dtype=Xc.dtype, split=0)

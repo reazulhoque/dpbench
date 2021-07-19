@@ -22,11 +22,14 @@ import datetime
 import math
 
 import dask.array as np
+from dask.distributed import Client
+from os import getenv
+import numpy
 
 
-def initialize(N):
+def initialize(N, nt):
     print("Initializing stencil grid...")
-    grid = np.zeros((N + 2, N + 2))
+    grid = np.zeros((N + 2, N + 2), chunks=((N+2)//nt, N+2))
     grid[:, 0] = -273.15
     grid[:, -1] = -273.15
     grid[-1, :] = -273.15
@@ -46,14 +49,17 @@ def run(grid, I, N):  # noqa: E741
         work = 0.2 * average
         # delta = np.sum(np.absolute(work - center))
         grid[1:-1, 1:-1] = work
+        grid = grid.persist()
     total = np.sum(grid[1:-1, 1:-1])
-    return total / (N ** 2)
+    return (total / (N ** 2)).compute()
 
 
 def run_jstencil(N, I, timing):  # noqa: E741
+    client = Client(scheduler_file=getenv("DASK_CFG"))
+    nt = numpy.sum([x for x in client.nthreads().values()])
     start = datetime.datetime.now()
-    grid = initialize(N)
-    average = run(grid, I, N).compute()
+    grid = initialize(N, nt)
+    average = run(grid, I, N)
     # This will sync the timing because we will need to wait for the result
     assert not math.isnan(average)
     stop = datetime.datetime.now()
