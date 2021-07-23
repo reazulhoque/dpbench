@@ -23,6 +23,7 @@ from benchmark import run_benchmark
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    add_common_args(parser)
     parser.add_argument(
         "--intercept",
         dest="B",
@@ -69,23 +70,6 @@ if __name__ == "__main__":
         dest="S",
         help="number of iterations between sampling the log likelihood",
     )
-    parser.add_argument(
-        "-b",
-        "--benchmark",
-        type=int,
-        default=1,
-        dest="benchmark",
-        help="number of times to benchmark this application (default 1 - "
-        "normal execution)",
-    )
-    parser.add_argument(
-        "-u",
-        "--use",
-        default='numpy',
-        choices=['numpy', 'dask', 'ramba', 'torch', 'heat', 'nums',],
-        dest="use",
-        help="use given numpy implementation",
-    )
     args = parser.parse_args()
 
     if args.use == 'numpy':
@@ -105,5 +89,6 @@ if __name__ == "__main__":
         run_linear_regression,
         args.benchmark,
         f"LINREG({args.P}),{args.use}",
+        args.no_nodes,
         (args.N, args.F, args.P, args.I, args.S, args.B),
     )

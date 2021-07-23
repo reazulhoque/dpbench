@@ -19,21 +19,25 @@
 from __future__ import print_function
 
 import argparse
-from benchmark import run_benchmark
+from benchmark import run_benchmark, add_common_args
+
+def _tuple(x):
+    return tuple(map(int, x.split(",")))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    add_common_args(parser)
     parser.add_argument(
         "-d",
         "--dim",
-        type=tuple,
+        type=_tuple,
         default=(1000,1000),
         help="output image dimension (x,y)",
     )
     parser.add_argument(
         "-r",
         "--region",
-        type=tuple,
+        type=_tuple,
         default=(-2.25, -1.25, 0.75, 1.25),
         help="region to compute (xmin, ymin, xmax, ymax)",
     )
@@ -50,23 +54,6 @@ if __name__ == "__main__":
         type=float,
         default=2.0,
         help="horizon",
-    )
-    parser.add_argument(
-        "-b",
-        "--benchmark",
-        type=int,
-        default=1,
-        dest="benchmark",
-        help="number of times to benchmark this application (default 1 "
-        "- normal execution)",
-    )
-    parser.add_argument(
-        "-u",
-        "--use",
-        default='numpy',
-        choices=['numpy', 'dask', 'ramba', 'torch', 'heat', 'nums',],
-        dest="use",
-        help="use given numpy implementation",
     )
     args = parser.parse_args()
 
@@ -87,5 +74,6 @@ if __name__ == "__main__":
         run_mandelbrot,
         args.benchmark,
         "STENCIL",
+        args.no_nodes,
         (*args.region, *args.dim, args.itermax, args.horizon)
     )

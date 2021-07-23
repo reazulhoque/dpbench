@@ -24,9 +24,34 @@ import time
 if sys.version_info > (3, 0):
     from functools import reduce
 
+def add_common_args(parser):
+    parser.add_argument(
+        "-b",
+        "--benchmark",
+        type=int,
+        default=1,
+        dest="benchmark",
+        help="number of times to benchmark this application (default 1 "
+        "- normal execution)",
+    )
+    parser.add_argument(
+        "-u",
+        "--use",
+        default='numpy',
+        choices=['numpy', 'dask', 'ramba', 'torch', 'heat', 'nums',],
+        dest="use",
+        help="use given numpy implementation",
+    )
+    parser.add_argument(
+        "--no-nodes",
+        default='0',
+        type=int,
+        help="Number of nodes this is running on (used for reporting only)",
+    )
+
 
 # A helper method for benchmarking applications
-def run_benchmark(f, samples, name, args):
+def run_benchmark(f, samples, name, nnodes, args):
     if samples > 1:
         results = [f(*args) for s in range(samples)]
         # Remove the largest and the smallest ones
@@ -60,6 +85,7 @@ def run_benchmark(f, samples, name, args):
                 str(ltime.tm_min),
                 str(ltime.tm_sec),
                 name,
+                nnodes,
                 str(samples),
                 str(mean),
                 str(variance),

@@ -19,10 +19,11 @@
 from __future__ import print_function
 
 import argparse
-from benchmark import run_benchmark
+from benchmark import run_benchmark, add_common_args
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    add_common_args(parser)
     parser.add_argument(
         "-i",
         "--iter",
@@ -46,23 +47,6 @@ if __name__ == "__main__":
         action="store_true",
         help="perform timing",
     )
-    parser.add_argument(
-        "-b",
-        "--benchmark",
-        type=int,
-        default=1,
-        dest="benchmark",
-        help="number of times to benchmark this application (default 1 "
-        "- normal execution)",
-    )
-    parser.add_argument(
-        "-u",
-        "--use",
-        default='numpy',
-        choices=['numpy', 'dask', 'ramba', 'torch', 'heat', 'nums',],
-        dest="use",
-        help="use given numpy implementation",
-    )
     args = parser.parse_args()
 
     if args.use == 'numpy':
@@ -82,5 +66,6 @@ if __name__ == "__main__":
         run_jstencil,
         args.benchmark,
         f"STENCIL,{args.use}",
+        args.no_nodes,
         (args.N, args.I, args.timing)
     )

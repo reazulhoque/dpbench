@@ -32,23 +32,7 @@ from benchmark import run_benchmark
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("\n\n!!!!!!!!!!!!!!!!!!!\nNote: use lbfgs/gen_Xy_data.py to generate input data\n!!!!!!!!!!!!!!!!!!!\n")
-    parser.add_argument(
-        "-b",
-        "--benchmark",
-        type=int,
-        default=1,
-        dest="benchmark",
-        help="number of times to benchmark this application (default 1 - "
-        "normal execution)",
-    )
-    parser.add_argument(
-        "-u",
-        "--use",
-        default='numpy',
-        choices=['numpy', 'dask', 'ramba', 'torch', 'heat', 'nums',],
-        dest="use",
-        help="use given numpy implementation",
-    )
+    add_common_args(parser)
     args = parser.parse_args()
 
     if args.use == 'numpy':
@@ -68,5 +52,6 @@ if __name__ == "__main__":
         run_lbfgs,
         args.benchmark,
         f"LBFGS,{args.use}",
+        args.no_nodes,
         (),
     )

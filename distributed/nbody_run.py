@@ -23,6 +23,7 @@ from benchmark import run_benchmark
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    add_common_args(parser)
     parser.add_argument(
         "-t",
         "--time",
@@ -52,23 +53,6 @@ if __name__ == "__main__":
         default=0.1,
         help="softening",
     )
-    parser.add_argument(
-        "-b",
-        "--benchmark",
-        type=int,
-        default=1,
-        dest="benchmark",
-        help="number of times to benchmark this application (default 1 "
-        "- normal execution)",
-    )
-    parser.add_argument(
-        "-u",
-        "--use",
-        default='numpy',
-        choices=['numpy', 'dask', 'ramba', 'torch', 'heat', 'nums',],
-        dest="use",
-        help="use given numpy implementation",
-    )
     args = parser.parse_args()
 
     if args.use == 'numpy':
@@ -88,5 +72,6 @@ if __name__ == "__main__":
         run_nbody,
         args.benchmark,
         f"NBODY,{args.use}",
+        args.no_nodes,
         (args.N, args.time, args.delta_time, args.softening)
     )
