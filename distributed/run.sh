@@ -52,6 +52,8 @@ for bench in $benchs; do
 	    run-mpi.sh $app -u $dist
 	elif [[ "$dist" == "ramba" || "$dist" == "nums" ]]; then
 	    run-ray.sh $app -u $dist
+	elif [[ "$dist" == "numpy" || "$dist" == "torch" ]]; then
+	    $app -u $dist
 	else
 	    run-${dist}.sh $app -u $dist
 	fi
