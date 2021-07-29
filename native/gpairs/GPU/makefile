@@ -6,7 +6,7 @@
 # Makefile for GNU make
 
 SRC:=                      \
-       data_gen.cpp          \
+       load_data.cpp          \
        main.cpp
 
 
@@ -19,7 +19,7 @@ FQOPT       :=f
 EQCOLON     :="="
 TARGET      := gpairs
 
-CFLAGS      += -g -O3
+CFLAGS      += -g -O3 -lstdc++
 CFLAGS      += -qopt-report
 CFLAGS      += -fiopenmp -fopenmp-targets=spir64
 CFLAGS      += -I./

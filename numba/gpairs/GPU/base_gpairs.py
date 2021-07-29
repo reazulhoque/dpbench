@@ -13,7 +13,7 @@ except:
     now = default_timer
     get_mops = lambda t0, t1, n: (n / (t1 - t0),t1-t0)
 
-DEFAULT_SEED = 43    
+DEFAULT_SEED = 43
 DEFAULT_NBINS = 20
 DEFAULT_RMIN, DEFAULT_RMAX = 0.1, 50
 DEFAULT_RBINS = np.logspace(
@@ -46,27 +46,17 @@ def get_device_selector (is_gpu = True):
 
     return os.environ.get('SYCL_DEVICE_FILTER')
 
-def random_weighted_points(n, Lbox, seed=DEFAULT_SEED):
-    """
-    """
-    rng = np.random.RandomState(seed)
-    data = rng.uniform(0, 1, n*4)
-    x, y, z, w = (
-        data[:n]*Lbox, data[n:2*n]*Lbox, data[2*n:3*n]*Lbox, data[3*n:])
-    return (
-        x.astype(np.float64), y.astype(np.float64), z.astype(np.float64),
-        w.astype(np.float64))
+def load_data():
+    x1 = np.genfromtxt('../../../data/gpairs/x1.csv', delimiter=",")
+    y1 = np.genfromtxt('../../../data/gpairs/y1.csv', delimiter=",")
+    z1 = np.genfromtxt('../../../data/gpairs/z1.csv', delimiter=",")
+    w1 = np.genfromtxt('../../../data/gpairs/w1.csv', delimiter=",")
+    x2 = np.genfromtxt('../../../data/gpairs/x2.csv', delimiter=",")
+    y2 = np.genfromtxt('../../../data/gpairs/y2.csv', delimiter=",")
+    z2 = np.genfromtxt('../../../data/gpairs/z2.csv', delimiter=",")
+    w2 = np.genfromtxt('../../../data/gpairs/w2.csv', delimiter=",")
 
-def gen_data(npoints):
-    Lbox = 500.
-    n1 = npoints
-    n2 = npoints
-    x1, y1, z1, w1 = random_weighted_points(n1, Lbox, 0)
-    x2, y2, z2, w2 = random_weighted_points(n2, Lbox, 1)
-
-    return (
-        x1, y1, z1, w1, x2, y2, z2, w2
-    )
+    return (x1, y1, z1, w1, x2, y2, z2, w2)
 
 def copy_h2d(x1, y1, z1, w1, x2, y2, z2, w2):
     device_env = ocldrv.runtime.get_gpu_device()
@@ -100,7 +90,7 @@ def run(name, alg, sizes=10, step=2, nopt=2**10):
     parser.add_argument('--size',  required=False, default=nopt,   help="Initial data size")
     parser.add_argument('--repeat',required=False, default=100,    help="Iterations inside measured region")
     parser.add_argument('--text',  required=False, default="",     help="Print with each result")
-    
+
     args = parser.parse_args()
     sizes= int(args.steps)
     step = int(args.step)
@@ -109,9 +99,19 @@ def run(name, alg, sizes=10, step=2, nopt=2**10):
 
     f=open("perf_output.csv",'w')
     f2 = open("runtimes.csv",'w',1)
-    
+
+    x1_full, y1_full, z1_full, w1_full, x2_full, y2_full, z2_full, w2_full = load_data()
+
     for i in xrange(sizes):
-        x1, y1, z1, w1, x2, y2, z2, w2 = gen_data(nopt)
+        x1 = x1_full[:nopt]
+        y1 = y1_full[:nopt]
+        z1 = z1_full[:nopt]
+        w1 = w1_full[:nopt]
+        x2 = x2_full[:nopt]
+        y2 = y2_full[:nopt]
+        z2 = z2_full[:nopt]
+        w2 = w2_full[:nopt]
+
         #d_x1, d_y1, d_z1, d_w1, d_x2, d_y2, d_z2, d_w2, d_rbins_squared = copy_h2d(x1, y1, z1, w1, x2, y2, z2, w2)
         iterations = xrange(repeat)
 
