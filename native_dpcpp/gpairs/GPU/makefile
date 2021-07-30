@@ -6,7 +6,7 @@
 # Makefile for GNU make
 
 SRC:=                      \
-       data_gen.cpp          \
+       load_data.cpp          \
        main.cpp
 
 
