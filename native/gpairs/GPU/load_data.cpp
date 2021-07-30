@@ -65,7 +65,7 @@ void InitRbins_Results(tfloat **rbins, tfloat **results_test) {
     }
 }
 
-void InitData(int npoints, tfloat **x1, tfloat **y1, tfloat **z1, tfloat **w1,
+void InitData(size_t npoints, tfloat **x1, tfloat **y1, tfloat **z1, tfloat **w1,
 	      tfloat **x2, tfloat **y2, tfloat **z2, tfloat **w2, tfloat **rbins, tfloat **results_test) {
 
     /* Allocate aligned memory */
