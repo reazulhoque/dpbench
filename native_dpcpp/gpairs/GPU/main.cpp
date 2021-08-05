@@ -27,12 +27,14 @@ int main(int argc, char * argv[])
     {
         sscanf(argv[1], "%d", &STEPS);
 	if (argc == 3) {
-	  sscanf(argv[2], "%lu", &nopt);
+	  sscanf(argv[2], "%zu", &nopt);
 	}
 	if (argc == 4) {
+	  sscanf(argv[2], "%zu", &nopt);
 	  sscanf(argv[3], "%d", &repeat);
 	}	
     }
+
 
     FILE *fptr;
     fptr = fopen("perf_output.csv", "w");

@@ -34,6 +34,8 @@ void call_gpairs( queue* q, size_t npoints, tfloat* x1, tfloat* y1, tfloat* z1, 
   q->memcpy(d_rbins, rbins, DEFAULT_NBINS * sizeof(tfloat));
   q->memcpy(d_results_test, results_test, (DEFAULT_NBINS-1) * sizeof(tfloat));
   
+  q->wait();
+
   q->submit([&](handler& h) {
       h.parallel_for<class theKernel>(range<1>{npoints}, [=](id<1> myID) {
 	  size_t i = myID[0];
@@ -66,6 +68,8 @@ void call_gpairs( queue* q, size_t npoints, tfloat* x1, tfloat* y1, tfloat* z1, 
 	  }	  
 	});
     }).wait();
+
+  q->wait();
 
   q->memcpy(results_test, d_results_test, (DEFAULT_NBINS-1) * sizeof(tfloat));
 

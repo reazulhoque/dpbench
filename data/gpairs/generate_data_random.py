@@ -18,6 +18,13 @@ def dump_in_csv(npoints, data, names):
 
 def main():
     npoints = 10240
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--points', required=False, default=npoints,  help="Number of points")
+
+    args   = parser.parse_args()
+    npoints = int(args.points)
+
     data = generate_data(npoints, 0)
     dump_in_csv(npoints, data, ["x1", "y1", "z1", "w1"])
     data = generate_data(npoints, 1)

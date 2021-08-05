@@ -13,14 +13,14 @@ SRC:=                      \
 # ==============================================================================
 # ############## Configure CFLAGS  #############################################
 # ==============================================================================
-CC          := icpx
+CC          := dpcpp
 QOPT        :=
 FQOPT       :=f
 EQCOLON     :="="
 TARGET      := gpairs
 
 CFLAGS      += -g -O3
-CFLAGS      += -fsycl -qopenmp
+#CFLAGS      += -DSYCL_USE_NATIVE_FP_ATOMICS
 CFLAGS      += -I./
 
 PREC ?= d
