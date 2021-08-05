@@ -114,6 +114,7 @@ def run(name, alg, sizes=3, step=2, nopt=2**10):
 
     x1_full, y1_full, z1_full, w1_full, x2_full, y2_full, z2_full, w2_full = load_data()
 
+
     for i in xrange(sizes):
         x1 = x1_full[:nopt]
         y1 = y1_full[:nopt]

@@ -19,6 +19,7 @@ def run_gpairs(x1, y1, z1, w1, x2, y2, z2, w2, rbins_squared):
 
     result = np.zeros_like(rbins_squared)[:-1]
     result = result.astype(np.float64)
+    count = np.array([0], dtype=np.float64)
 
     with dpctl.device_context(base_gpairs.get_device_selector()) as gpu_queue:
         # gwpc.count_weighted_pairs_3d_intel[blocks, numba_dppy.DEFAULT_LOCAL_SIZE](
@@ -55,11 +56,16 @@ def run_gpairs(x1, y1, z1, w1, x2, y2, z2, w2, rbins_squared):
         d_result = dpt.usm_ndarray(result.shape, dtype=result.dtype, buffer="device", buffer_ctor_kwargs={"queue": gpu_queue})
         d_result.usm_data.copy_from_host(result.reshape((-1)).view("|u1"))
 
+        d_count = dpt.usm_ndarray(count.shape, dtype=count.dtype, buffer="device", buffer_ctor_kwargs={"queue": gpu_queue})
+        d_count.usm_data.copy_from_host(count.reshape((-1)).view("|u1"))
+
 
         gwpc.count_weighted_pairs_3d_intel_ver2[x1.shape[0], numba_dppy.DEFAULT_LOCAL_SIZE](
             d_x1, d_y1, d_z1, d_w1, d_x2, d_y2, d_z2, d_w2,
-            d_rbins_squared, d_result)
+            d_rbins_squared, d_result, count)
 
         d_result.usm_data.copy_to_host(result.reshape((-1)).view("|u1"))
+        d_count.usm_data.copy_to_host(count.reshape((-1)).view("|u1"))
+        print("COUNT of atomic ops: ", count);
         
 base_gpairs.run("Gpairs Dppy kernel",run_gpairs)
