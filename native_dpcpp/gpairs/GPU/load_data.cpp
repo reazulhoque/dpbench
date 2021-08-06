@@ -77,6 +77,8 @@ void InitData(size_t npoints, tfloat **x1, tfloat **y1, tfloat **z1, tfloat **w1
     *y2 = (tfloat*)_mm_malloc(npoints * sizeof(tfloat), ALIGN_FACTOR);
     *z2 = (tfloat*)_mm_malloc(npoints * sizeof(tfloat), ALIGN_FACTOR);
     *w2 = (tfloat*)_mm_malloc(npoints * sizeof(tfloat), ALIGN_FACTOR);
+    *rbins = (tfloat*)_mm_malloc(DEFAULT_NBINS * sizeof(tfloat), ALIGN_FACTOR);
+    *results_test = (tfloat*)_mm_malloc((DEFAULT_NBINS-1) * sizeof(tfloat), ALIGN_FACTOR);
 
     if ( (*x1 == NULL) || (*y1 == NULL) || (*z1 == NULL) || (*w1 == NULL) ||
        (*x2 == NULL) || (*y2 == NULL) || (*z2 == NULL) || (*w2 == NULL)) {
@@ -93,7 +95,11 @@ void InitData(size_t npoints, tfloat **x1, tfloat **y1, tfloat **z1, tfloat **w1
     load_array(npoints, z2, "z2.csv");
     load_array(npoints, w2, "w2.csv");
 
-    InitRbins_Results(rbins, results_test);
+    load_array(DEFAULT_NBINS, rbins, "rbins_squared.csv");
+
+    for (unsigned int i = 0; i < DEFAULT_NBINS-1; i++) {
+	(*results_test)[i] = 0;
+    }
 }
 
 /* Deallocate arrays */

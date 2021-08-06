@@ -5,6 +5,7 @@
 import os,json
 import numpy as np
 import numpy.random as rnd
+
 try:
     import itimer as it
     now = it.itime
@@ -56,8 +57,9 @@ def load_data():
     y2 = np.genfromtxt('../../../data/gpairs/y2.csv', delimiter=",")
     z2 = np.genfromtxt('../../../data/gpairs/z2.csv', delimiter=",")
     w2 = np.genfromtxt('../../../data/gpairs/w2.csv', delimiter=",")
+    rbins_squared = np.genfromtxt('../../../data/gpairs/rbins_squared.csv', delimiter=",")
 
-    return (x1, y1, z1, w1, x2, y2, z2, w2)
+    return (x1, y1, z1, w1, x2, y2, z2, w2, rbins_squared)
 
 def copy_h2d(x1, y1, z1, w1, x2, y2, z2, w2):
     device_env = ocldrv.runtime.get_gpu_device()
@@ -112,7 +114,7 @@ def run(name, alg, sizes=3, step=2, nopt=2**10):
     f=open("perf_output.csv",'w')
     f2 = open("runtimes.csv",'w',1)
 
-    x1_full, y1_full, z1_full, w1_full, x2_full, y2_full, z2_full, w2_full = load_data()
+    x1_full, y1_full, z1_full, w1_full, x2_full, y2_full, z2_full, w2_full, rbins_squared = load_data()
 
 
     for i in xrange(sizes):
@@ -128,10 +130,10 @@ def run(name, alg, sizes=3, step=2, nopt=2**10):
         #d_x1, d_y1, d_z1, d_w1, d_x2, d_y2, d_z2, d_w2, d_rbins_squared = copy_h2d(x1, y1, z1, w1, x2, y2, z2, w2)
         iterations = xrange(repeat)
 
-        alg(x1, y1, z1, w1, x2, y2, z2, w2, DEFAULT_RBINS_SQUARED) #warmup
+        alg(x1, y1, z1, w1, x2, y2, z2, w2, rbins_squared) #warmup
         t0 = now()
         for _ in iterations:
-            alg(x1, y1, z1, w1, x2, y2, z2, w2, DEFAULT_RBINS_SQUARED)
+            alg(x1, y1, z1, w1, x2, y2, z2, w2, rbins_squared)
 
         mops,time = get_mops(t0, now(), nopt)
         f.write(str(nopt) + "," + str(mops*2*repeat) + "\n")

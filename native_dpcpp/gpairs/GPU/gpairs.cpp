@@ -9,7 +9,8 @@
 void call_gpairs( queue* q, size_t npoints, tfloat* x1, tfloat* y1, tfloat* z1, tfloat* w1, tfloat* x2,tfloat* y2,tfloat* z2, tfloat* w2,tfloat* rbins,tfloat* results_test) {
 
   int nbins = DEFAULT_NBINS;
-  tfloat count = 0;
+  tfloat *count = (tfloat*)malloc(sizeof(tfloat));
+  count[0] = 0.0;
   tfloat *d_x1, *d_y1, *d_z1, *d_w1, *d_x2, *d_y2, *d_z2, *d_w2, *d_rbins, *d_results_test, *d_count;
 
   d_x1 = (tfloat*)malloc_device( npoints * sizeof(tfloat), *q);
@@ -35,7 +36,7 @@ void call_gpairs( queue* q, size_t npoints, tfloat* x1, tfloat* y1, tfloat* z1, 
   q->memcpy(d_w2, w2, npoints * sizeof(tfloat));
   q->memcpy(d_rbins, rbins, DEFAULT_NBINS * sizeof(tfloat));
   q->memcpy(d_results_test, results_test, (DEFAULT_NBINS-1) * sizeof(tfloat));
-  q->memcpy(d_count, &count, sizeof(tfloat));
+  q->memcpy(d_count, count, sizeof(tfloat));
   
   q->wait();
 
@@ -79,11 +80,12 @@ void call_gpairs( queue* q, size_t npoints, tfloat* x1, tfloat* y1, tfloat* z1, 
   q->wait();
 
   q->memcpy(results_test, d_results_test, (DEFAULT_NBINS-1) * sizeof(tfloat));
-  q->memcpy(&count, d_count, sizeof(tfloat));
-
-  printf("COUNT of atomic ops: %lf\n", count);
+  q->memcpy(count, d_count, sizeof(tfloat));
 
   q->wait();
+
+  printf("COUNT of atomic ops: %lf\n", count[0]);
+
   
   free(d_x1,q->get_context());
   free(d_y1,q->get_context());

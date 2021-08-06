@@ -62,7 +62,7 @@ def run_gpairs(x1, y1, z1, w1, x2, y2, z2, w2, rbins_squared):
 
         gwpc.count_weighted_pairs_3d_intel_ver2[x1.shape[0], numba_dppy.DEFAULT_LOCAL_SIZE](
             d_x1, d_y1, d_z1, d_w1, d_x2, d_y2, d_z2, d_w2,
-            d_rbins_squared, d_result, count)
+            d_rbins_squared, d_result, d_count)
 
         d_result.usm_data.copy_to_host(result.reshape((-1)).view("|u1"))
         d_count.usm_data.copy_to_host(count.reshape((-1)).view("|u1"))

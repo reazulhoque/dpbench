@@ -334,9 +334,9 @@ def count_weighted_pairs_3d_intel_ver2(
             # - could reenable later when it's supported (~April 2020)
             # - could work around this to avoid atomics, which would perform better anyway
             #cuda.atomic.add(result, k-1, wprod)
+
             numba_dppy.atomic.add(result, k-1, wprod)
             numba_dppy.atomic.add(count, 0, 1)
-            print("here", count[0])
             
             k = k-1
             if k <= 0:
