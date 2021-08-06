@@ -41,30 +41,6 @@ void load_array(int npoints, tfloat **array, std::string file_name) {
     }
 }
 
-void InitRbins_Results(tfloat **rbins, tfloat **results_test) {
-    const float DEFAULT_RMIN = 0.1;
-    const int DEFAULT_RMAX = 50;
-
-    *rbins = (tfloat*)_mm_malloc(DEFAULT_NBINS * sizeof(tfloat), ALIGN_FACTOR);
-    //result = (tfloat*)_mm_malloc(DEFAULT_NBINS * sizeof(tfloat), ALIGN_FACTOR);
-    *results_test = (tfloat*)_mm_malloc((DEFAULT_NBINS-1) * sizeof(tfloat), ALIGN_FACTOR);
-
-    tfloat start = log10(DEFAULT_RMIN);
-    tfloat stop = log10(DEFAULT_RMAX);
-
-    tfloat curval = pow(10, start);
-    tfloat baseval = pow(10, ((stop-start)/DEFAULT_NBINS));
-
-    for (unsigned int i = 0; i < DEFAULT_NBINS; i++) {
-        (*rbins)[i] = curval * curval;
-        curval *= baseval;
-
-        if (i != (DEFAULT_NBINS-1)){
-          (*results_test)[i] = 0;
-        }
-    }
-}
-
 void InitData(size_t npoints, tfloat **x1, tfloat **y1, tfloat **z1, tfloat **w1,
 	      tfloat **x2, tfloat **y2, tfloat **z2, tfloat **w2, tfloat **rbins, tfloat **results_test) {
 

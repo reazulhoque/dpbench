@@ -20,7 +20,7 @@ EQCOLON     :="="
 TARGET      := gpairs
 
 CFLAGS      += -g -O3
-CFLAGS      += -DSYCL_USE_NATIVE_FP_ATOMICS
+#CFLAGS      += -DSYCL_USE_NATIVE_FP_ATOMICS
 CFLAGS      += -I./
 
 PREC ?= d
