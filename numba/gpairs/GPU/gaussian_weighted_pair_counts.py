@@ -304,7 +304,7 @@ def count_weighted_pairs_3d_intel(
 
 @numba_dppy.kernel
 def count_weighted_pairs_3d_intel_ver2(
-        x1, y1, z1, w1, x2, y2, z2, w2, rbins_squared, result, count):
+        x1, y1, z1, w1, x2, y2, z2, w2, rbins_squared, result):
     """Naively count Npairs(<r), the total number of pairs that are separated
     by a distance less than r, for each r**2 in the input rbins_squared.
     """
@@ -336,12 +336,11 @@ def count_weighted_pairs_3d_intel_ver2(
             #cuda.atomic.add(result, k-1, wprod)
 
             numba_dppy.atomic.add(result, k-1, wprod)
-            numba_dppy.atomic.add(count, 0, 1)
-            
+
             k = k-1
             if k <= 0:
                 break
-                
+
 # def count_weighted_pairs_3d_cpu_mp(
 #         x1, y1, z1, w1, x2, y2, z2, w2, rbins_squared, result):
 

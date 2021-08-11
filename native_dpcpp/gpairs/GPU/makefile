@@ -23,7 +23,7 @@ CFLAGS      += -g -O3
 #CFLAGS      += -DSYCL_USE_NATIVE_FP_ATOMICS
 CFLAGS      += -I./
 
-PREC ?= d
+PREC ?= f
 ifeq ($(PREC),d)
 else
     CFLAGS += -D__DO_FLOAT__

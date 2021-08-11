@@ -10,7 +10,7 @@ void call_gpairs( queue* q, size_t npoints, tfloat* x1, tfloat* y1, tfloat* z1, 
 
   int nbins = DEFAULT_NBINS;
   tfloat *count = (tfloat*)malloc(sizeof(tfloat));
-  count[0] = 0.0;
+  //count[0] = 0.0;
   tfloat *d_x1, *d_y1, *d_z1, *d_w1, *d_x2, *d_y2, *d_z2, *d_w2, *d_rbins, *d_results_test, *d_count;
 
   d_x1 = (tfloat*)malloc_device( npoints * sizeof(tfloat), *q);
@@ -23,21 +23,29 @@ void call_gpairs( queue* q, size_t npoints, tfloat* x1, tfloat* y1, tfloat* z1, 
   d_w2 = (tfloat*)malloc_device( npoints * sizeof(tfloat), *q);
   d_rbins = (tfloat*)malloc_device( DEFAULT_NBINS * sizeof(tfloat), *q);
   d_results_test = (tfloat*)malloc_device( (DEFAULT_NBINS-1) * sizeof(tfloat), *q);
-  d_count = (tfloat*)malloc_device( 1 * sizeof(tfloat), *q);
+  //d_count = (tfloat*)malloc_device( 1 * sizeof(tfloat), *q);
 
   // copy data host to device
   q->memcpy(d_x1, x1, npoints * sizeof(tfloat));
+  q->wait();
   q->memcpy(d_y1, y1, npoints * sizeof(tfloat));
+  q->wait();
   q->memcpy(d_z1, z1, npoints * sizeof(tfloat));
+  q->wait();
   q->memcpy(d_w1, w1, npoints * sizeof(tfloat));
+  q->wait();
   q->memcpy(d_x2, x2, npoints * sizeof(tfloat));
+  q->wait();
   q->memcpy(d_y2, y2, npoints * sizeof(tfloat));
+  q->wait();
   q->memcpy(d_z2, z2, npoints * sizeof(tfloat));
+  q->wait();
   q->memcpy(d_w2, w2, npoints * sizeof(tfloat));
+  q->wait();
   q->memcpy(d_rbins, rbins, DEFAULT_NBINS * sizeof(tfloat));
+  q->wait();
   q->memcpy(d_results_test, results_test, (DEFAULT_NBINS-1) * sizeof(tfloat));
-  q->memcpy(d_count, count, sizeof(tfloat));
-  
+  //q->memcpy(d_count, count, sizeof(tfloat));
   q->wait();
 
   q->submit([&](handler& h) {
@@ -65,9 +73,11 @@ void call_gpairs( queue* q, size_t npoints, tfloat* x1, tfloat* y1, tfloat* z1, 
 				       sycl::ONEAPI::memory_scope::device,
 				       //sycl::access::address_space::global_space>atomic_data(d_results_test[k-1]);
 				       sycl::access::address_space::global_space>(d_results_test[k-1]) += wprod;
+          /*
 	      sycl::ONEAPI::atomic_ref<tfloat, sycl::ONEAPI::memory_order::relaxed,
 				       sycl::ONEAPI::memory_scope::device,
 				       sycl::access::address_space::global_space>(d_count[0]) += 1;
+           */
 	  
 	      //atomic_data += wprod;
 	      k = k-1;
@@ -80,11 +90,11 @@ void call_gpairs( queue* q, size_t npoints, tfloat* x1, tfloat* y1, tfloat* z1, 
   q->wait();
 
   q->memcpy(results_test, d_results_test, (DEFAULT_NBINS-1) * sizeof(tfloat));
-  q->memcpy(count, d_count, sizeof(tfloat));
+  //q->memcpy(count, d_count, sizeof(tfloat));
 
   q->wait();
 
-  printf("COUNT of atomic ops: %lf\n", count[0]);
+  //printf("COUNT of atomic ops: %lf\n", count[0]);
 
   
   free(d_x1,q->get_context());

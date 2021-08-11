@@ -15,13 +15,15 @@ except:
     now = default_timer
     get_mops = lambda t0, t1, n: (n / (t1 - t0),t1-t0)
 
+dtype = np.float32
+
 SEED = 7777777
 DEFAULT_NBINS = 20
 DEFAULT_RMIN, DEFAULT_RMAX = 0.1, 50
 DEFAULT_RBINS = np.logspace(
     np.log10(DEFAULT_RMIN), np.log10(DEFAULT_RMAX), DEFAULT_NBINS).astype(
-        np.float64)
-DEFAULT_RBINS_SQUARED = (DEFAULT_RBINS**2).astype(np.float64)
+        dtype)
+DEFAULT_RBINS_SQUARED = (DEFAULT_RBINS**2).astype(dtype)
 
 ######################################################
 # GLOBAL DECLARATIONS THAT WILL BE USED IN ALL FILES #
@@ -63,18 +65,18 @@ def load_data():
 
 def copy_h2d(x1, y1, z1, w1, x2, y2, z2, w2):
     device_env = ocldrv.runtime.get_gpu_device()
-    d_x1 = device_env.copy_array_to_device(x1.astype(np.float64))
-    d_y1 = device_env.copy_array_to_device(y1.astype(np.float64))
-    d_z1 = device_env.copy_array_to_device(z1.astype(np.float64))
-    d_w1 = device_env.copy_array_to_device(w1.astype(np.float64))
+    d_x1 = device_env.copy_array_to_device(x1.astype(dtype))
+    d_y1 = device_env.copy_array_to_device(y1.astype(dtype))
+    d_z1 = device_env.copy_array_to_device(z1.astype(dtype))
+    d_w1 = device_env.copy_array_to_device(w1.astype(dtype))
 
-    d_x2 = device_env.copy_array_to_device(x2.astype(np.float64))
-    d_y2 = device_env.copy_array_to_device(y2.astype(np.float64))
-    d_z2 = device_env.copy_array_to_device(z2.astype(np.float64))
-    d_w2 = device_env.copy_array_to_device(w2.astype(np.float64))
+    d_x2 = device_env.copy_array_to_device(x2.astype(dtype))
+    d_y2 = device_env.copy_array_to_device(y2.astype(dtype))
+    d_z2 = device_env.copy_array_to_device(z2.astype(dtype))
+    d_w2 = device_env.copy_array_to_device(w2.astype(dtype))
 
     d_rbins_squared = device_env.copy_array_to_device(
-        DEFAULT_RBINS_SQUARED.astype(np.float64))
+        DEFAULT_RBINS_SQUARED.astype(dtype))
 
     return (
         d_x1, d_y1, d_z1, d_w1, d_x2, d_y2, d_z2, d_w2, d_rbins_squared
@@ -138,7 +140,7 @@ def run(name, alg, sizes=3, step=2, nopt=2**10):
         mops,time = get_mops(t0, now(), nopt)
         f.write(str(nopt) + "," + str(mops*2*repeat) + "\n")
         f2.write(str(nopt) + "," + str(time) + "\n")
-        print("ERF: {:15s} | Size: {:10d} | MOPS: {:15.2f} | TIME: {:10.6f}".format(name, nopt, mops*2*repeat,time),flush=True)
+        print("ERF: {:15s} | NPoints: {:10d} | ITEMSIZE: {:10d}B  | MOPS: {:15.2f} | TIME: {:10.6f}".format(name, nopt, np.dtype(dtype).itemsize, mops*2*repeat,time),flush=True)
         output['metrics'].append((nopt,mops,time))
         nopt *= step
         repeat -= step

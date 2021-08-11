@@ -77,7 +77,8 @@ int main(int argc, char * argv[])
 	call_gpairs( q, nopt, x1, y1, z1, w1, x2, y2, z2, w2, rbins, results_test );
       }
       t2 = timer_rdtsc();
-      printf("%lu,%.6lf\n",nopt,((double) (t2 - t1) / getHz()));
+      //printf("%lu,%.6lf\n",nopt,((double) (t2 - t1) / getHz()));
+      printf("ERF: Native_dpcpp | NPoints %zu | ITEMSIZE: %zu | MOPS: %.6lf | TIME: %lf\n", nopt, sizeof(tfloat), (2.0 * nopt * repeat )/((double) (t2 - t1) / getHz()), ((double) (t2 - t1) / getHz()));
       fflush(stdout);
       fprintf(fptr, "%lu,%.6lf\n",nopt,(2.0 * nopt * repeat )/((double) (t2 - t1) / getHz()));
       fprintf(fptr1, "%lu,%.6lf\n",nopt,((double) (t2 - t1) / getHz()));
