@@ -41,7 +41,7 @@ class all_workloads(enum.Enum):
     pairwise_distance = 'pairwise_distance'
     pca = 'pca'
     rambo = 'rambo'
-    pathfinder = 'pathfinder'
+    #pathfinder = 'pathfinder'
     # pygbm = 'pygbm'
     # random_forest = 'random_forest'
     # svm = 'svm'
@@ -112,8 +112,8 @@ class workloads():
                                                            'kernel':"pairwise_distance_kernel.py"},
                     all_workloads.pca.value:{'numba':"pca.py",
                                              'kernel':"pca.py"},
-                    all_workloads.pathfinder.value:{'numba':"pathfinder.py",
-                                               'kernel':"pathfinder.py"},
+                    # all_workloads.pathfinder.value:{'numba':"pathfinder.py",
+                    #                            'kernel':"pathfinder.py"},
                     all_workloads.rambo.value:{'numba':"rambo.py",
                                                'kernel':"rambo_kernel.py"},
                     all_workloads.gpairs.value:{'numba':"run_gpairs.py",
@@ -198,8 +198,8 @@ class workloads():
                 'ref_input': 2**19,
                 'NUMBA_TEST_CMD': ["python", wl_names[all_workloads.knn.value]['numba'] if not kernel_mode else wl_names[all_workloads.knn.value]['kernel'], "--steps", "1"],
                 'NUMBA_PERF_CMD': ["python", wl_names[all_workloads.knn.value]['numba'] if not kernel_mode else wl_names[all_workloads.knn.value]['kernel']],
-                'NUMBA_VTUNE_CMD': ["python", wl_names[all_workloads.knn.value]['numba'] if not kernel_mode else wl_names[all_workloads.knn.value]['kernel'], "--steps", "1", "--size", str(2 ** 10)],
-                'NUMBA_ADVISOR_CMD': ["python", wl_names[all_workloads.knn.value]['numba'] if not kernel_mode else wl_names[all_workloads.knn.value]['kernel'], "--steps", "1", "--size", str(2 ** 10)],
+                'NUMBA_VTUNE_CMD': ["python", wl_names[all_workloads.knn.value]['numba'] if not kernel_mode else wl_names[all_workloads.knn.value]['kernel'], "--steps", "1", "--size", str(2 ** 19)],
+                'NUMBA_ADVISOR_CMD': ["python", wl_names[all_workloads.knn.value]['numba'] if not kernel_mode else wl_names[all_workloads.knn.value]['kernel'], "--steps", "1", "--size", str(2 ** 19)],
                 'NUMBA_CPU_TEST_CMD': ["python", wl_names[all_workloads.knn.value]['numba'], "--steps", "1"],
                 'NUMBA_CPU_PERF_CMD': ["python", wl_names[all_workloads.knn.value]['numba']],
                 'NUMBA_CPU_VTUNE_CMD': ["python", wl_names[all_workloads.knn.value]['numba'], "--steps", "1", "--size", str(2 ** 10)],
@@ -214,8 +214,8 @@ class workloads():
                 'DAAL4PY_ADVISOR_CMD': ["python", "knn.py", "--steps", "1", "--size", str(2 ** 10)],
                 'NATIVE_TEST_CMD': ["./knn", "1"],
                 'NATIVE_PERF_CMD': ["./knn"],
-                'NATIVE_VTUNE_CMD': ["./knn", "1", str(2 ** 10)],
-                'NATIVE_ADVISOR_CMD': ["./knn", "1", str(2 ** 10)],
+                'NATIVE_VTUNE_CMD': ["./knn", "1", str(2 ** 19)],
+                'NATIVE_ADVISOR_CMD': ["./knn", "1", str(2 ** 19)],
                 'NATIVE_OPTIMISED_TEST_CMD': ["python", "base_knn.py", "--steps", "1"],
                 'NATIVE_OPTIMISED_PERF_CMD': ["python", "base_knn.py"],
                 'NATIVE_OPTIMISED_VTUNE_CMD': ["python", "base_knn.py", "--steps", "1", "--size", str(2 ** 10)],
@@ -317,22 +317,22 @@ class workloads():
                 'NATIVE_VTUNE_CMD': ["./gpairs", "1"],
                 'NATIVE_ADVISOR_CMD': ["./gpairs", "1"],
             },
-            all_workloads.pathfinder.value: {
-                'execute': False,
-                'ref_input': 2**19,
-                'NUMBA_TEST_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'] if not kernel_mode else wl_names[all_workloads.pathfinder.value]['kernel'], "--steps", "1"],
-                'NUMBA_PERF_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'] if not kernel_mode else wl_names[all_workloads.pathfinder.value]['kernel']],
-                'NUMBA_VTUNE_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'] if not kernel_mode else wl_names[all_workloads.pathfinder.value]['kernel'], "--steps", "1", "--size", str(2**19)],
-                'NUMBA_ADVISOR_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'] if not kernel_mode else wl_names[all_workloads.pathfinder.value]['kernel'], "--steps", "1", "--size", str(2**19)],
-                'NUMBA_CPU_TEST_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'], "--steps", "1"],
-                'NUMBA_CPU_PERF_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba']],
-                'NUMBA_CPU_VTUNE_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'], "--steps", "1", "--size", str(2**19)],
-                'NUMBA_CPU_ADVISOR_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'], "--steps", "1", "--size", str(2**19)],
-                'NATIVE_TEST_CMD': ["./pathfinder", "1"],
-                'NATIVE_PERF_CMD': ["./pathfinder"],
-                'NATIVE_VTUNE_CMD': ["./pathfinder", "1", str(2**19), "1"],
-                'NATIVE_ADVISOR_CMD': ["./pathfinder", "1", str(2**19), "1"],
-            },
+            # all_workloads.pathfinder.value: {
+            #     'execute': False,
+            #     'ref_input': 2**14,
+            #     'NUMBA_TEST_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'] if not kernel_mode else wl_names[all_workloads.pathfinder.value]['kernel'], "--steps", "1", "--usm"],
+            #     'NUMBA_PERF_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'] if not kernel_mode else wl_names[all_workloads.pathfinder.value]['kernel'], "--usm"],
+            #     'NUMBA_VTUNE_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'] if not kernel_mode else wl_names[all_workloads.pathfinder.value]['kernel'], "--steps", "1", "--size", str(2**14), "--usm"],
+            #     'NUMBA_ADVISOR_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'] if not kernel_mode else wl_names[all_workloads.pathfinder.value]['kernel'], "--steps", "1", "--size", str(2**14), "--usm"],
+            #     'NUMBA_CPU_TEST_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'], "--steps", "1"],
+            #     'NUMBA_CPU_PERF_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba']],
+            #     'NUMBA_CPU_VTUNE_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'], "--steps", "1", "--size", str(2**14)],
+            #     'NUMBA_CPU_ADVISOR_CMD': ["python", wl_names[all_workloads.pathfinder.value]['numba'], "--steps", "1", "--size", str(2**14)],
+            #     'NATIVE_TEST_CMD': ["./pathfinder", "1"],
+            #     'NATIVE_PERF_CMD': ["./pathfinder"],
+            #     'NATIVE_VTUNE_CMD': ["./pathfinder", "1", str(2**14), "1"],
+            #     'NATIVE_ADVISOR_CMD': ["./pathfinder", "1", str(2**14), "1"],
+            # },
             # all_workloads.pygbm.value: {
             #     'execute': False,
             #     'ref_input': 2**10,
